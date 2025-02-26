@@ -1,0 +1,26 @@
+{
+  "name": "ai-agents",
+  "version": "1.0.0",
+  "description": "Managing ai agents",
+  "keywords": [
+    "ai",
+    "agents",
+    "node",
+    "express"
+  ],
+  "license": "ISC",
+  "author": "florin",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "morgan": "^1.10.0",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
