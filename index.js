@@ -1,7 +1,10 @@
 const express = require('express')
 const app = express()
 const port = 3000
-// respond with "hello world" when a GET request is made to the homepage
+
+const agentsRouter = require('./router/agents');
+app.use('/api', agentsRouter);
+
 app.get('/', (req, res) => {
   res.send('Welcome to AI agents app')
 })
