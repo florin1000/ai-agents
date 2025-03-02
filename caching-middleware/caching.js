@@ -4,6 +4,7 @@ async function cache(req, res, next) {
   try {
     const cachedData = await redisClient.get(`data:${id}`);
     if (cachedData) {
+      console.log(`Cache hit for agent ${id}`);
       return res.json(JSON.parse(cachedData));
     }
     next();

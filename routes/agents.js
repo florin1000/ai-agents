@@ -2,49 +2,56 @@ const express = require('express');
 const router = express.Router();
 const redisClient = require('../redisClient'); // adjust path as needed
 const cache = require('../caching-middleware/caching');
+const agents = require('./data.js');
 
-// GET /agents - List all AI agents
 router.get('/agents', (req, res, next) => {
-  // Logic to retrieve all agents
-  res.send('List of all AI agents');
+  res.json(agents);
 });
 
-// POST /agents - Create a new AI agent
 router.post('/agents', (req, res, next) => {
-  // Logic to create a new agent
-  res.send('New AI agent created');
+  const newAgent = req.body;
+  console.log('New Agent:', newAgent);
+  agents.push(newAgent)
+  res.status(201).json(newAgent);
 });
 
 
-// GET /agents/:id - Retrieve details about a specific agent
 router.get('/agents/:id', cache, async (req, res, next) => {
   const {id} = req.params;
-  const dataFromDB = {id, name: 'Example Data'};
+  const agent = agents.find(agent => agent.id === +id);
+  console.log('agent ', agent)
+  // Store the result in Redis with a TTL (time to live) of 3600 seconds
+  await redisClient.setEx(`data:${id}`, 3600, JSON.stringify(agent));
 
-  // Store the result in Redis with a TTL (time to live) of 60 seconds
-  await redisClient.setEx(`data:${id}`, 3600, JSON.stringify(dataFromDB));
-
-  res.json(dataFromDB);
+  res.json(agent);
 });
 
-// PUT /agents/:id - Update an agent's attributes
 router.put('/agents/:id', (req, res, next) => {
   const {id} = req.params;
-  // Logic to update the agent's details
-  res.send(`Agent ${id} updated`);
+  const updatedAgent = req.body;
+  const index = agents.findIndex(agent => agent.id === +id);
+
+  if (index !== -1) {
+    agents.splice(index, 1, {...agents[index], ...updatedAgent});
+    res.status(200).json({message: `Agent ${id} updated`, agent: agents[index]});
+  } else {
+    res.status(404).json({message: `Agent ${id} not found`});
+  }
 });
 
-// DELETE /agents/:id - Remove an agent
 router.delete('/agents/:id', (req, res, next) => {
   const {id} = req.params;
-  // Logic to remove the agent
-  res.send(`Agent ${id} deleted`);
+  const index = agents.findIndex(agent => agent.id === +id);
+  if (index !== -1) {
+    agents.splice(index, 1,);
+    res.status(200).json({message: `Agent ${id} deleted`, agents});
+  } else {
+    res.status(404).json({message: `Agent ${id} not found`});
+  }
 });
 
-// POST /agents/:id/execute - Instruct an agent to perform a task
 router.post('/agents/:id/execute', (req, res, next) => {
   const {id} = req.params;
-  // Logic to execute a task for the agent
   res.send(`Agent ${id} is executing a task`);
 });
 
