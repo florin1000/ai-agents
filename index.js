@@ -6,6 +6,7 @@ const agentsRouter = require('./routes/agents');
 const helmet = require('helmet');
 
 
+app.use(express.json());
 app.use(morgan('combined'));
 app.use(helmet());
 app.use('/api', agentsRouter);
